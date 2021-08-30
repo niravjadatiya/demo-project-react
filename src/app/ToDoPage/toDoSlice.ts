@@ -18,17 +18,25 @@ export const toDoSlice = createSlice({
     initialState: {
         isLoading: false,
         isCreateFormOpen: false,
+        isDeleteConfirmOpen: false,
         toDoList: [],
-        selectedTodo: null
+        selectedTodo: null,
     },
+
     reducers: {
         setIsCreateFormOpen: (state, { payload }: any) => {
             console.log(state, payload);
             state.isCreateFormOpen = payload;
             return state;
         },
-        handleFormChange: (state, { payload }: any) => {
-            console.log(payload);
+
+        setIsDeleteConfirmOpen: (state, { payload }: any) => {
+            console.log(state, payload);
+            state.isDeleteConfirmOpen = payload.isDeleteConfirmOpen;
+            if (payload.todo) {
+                state.selectedTodo = payload.todo;
+            }
+            return state;
         },
 
         saveTodo: (state, { payload }: any) => {
@@ -56,11 +64,13 @@ export const toDoSlice = createSlice({
             return state;
         },
 
-        deleteTodo: (state, { id }: any) => {
+        deleteTodo: (state: any) => {
             const toDoList = Object.assign([], state.toDoList);
-            const index = toDoList.findIndex((row: any) => row.id === id);
+            const index = toDoList.findIndex((row: any) => row.id === state.selectedTodo.id);
             toDoList.splice(index, 1);
             state.toDoList = [...toDoList];
+            state.selectedTodo = null;
+            state.isDeleteConfirmOpen = false;
             return state;
         },
     },
@@ -83,7 +93,7 @@ export const toDoSlice = createSlice({
     // }
 });
 
-export const { saveTodo, setIsCreateFormOpen, handleFormChange, deleteTodo, editTodo, updateTodo } = toDoSlice.actions;
+export const { saveTodo, setIsCreateFormOpen, setIsDeleteConfirmOpen, deleteTodo, editTodo, updateTodo } = toDoSlice.actions;
 
 // export { saveTodoAPI };
 

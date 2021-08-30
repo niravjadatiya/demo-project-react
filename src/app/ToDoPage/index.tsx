@@ -6,29 +6,34 @@ import EditIcon from '@material-ui/icons/Edit';
 import useStyles from './styles';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import CreateToDoFormDialog from './CreateToDoFormDialog';
-import { deleteTodo, editTodo, setIsCreateFormOpen } from './toDoSlice';
+import { editTodo, setIsCreateFormOpen, setIsDeleteConfirmOpen } from './toDoSlice';
+import ConfirmationDialog from './ConfirmationDialog';
 
 const ToDoPage = () => {
     const dispatch = useAppDispatch();
     const classes = useStyles();
-    const { isCreateFormOpen, toDoList } = useAppSelector((state: any) => state.toDo);
-
+    const { isCreateFormOpen, isDeleteConfirmOpen, toDoList } = useAppSelector((state: any) => state.toDo);
 
     const handleEditClick = (id: any) => () => {
         dispatch(editTodo(id));
     };
 
-    const handleDeleteClick = (id: any) => () => {
-        dispatch(deleteTodo(id));
-    };
+    // const handleDeleteClick = (id: any) => () => {
+    //     dispatch(deleteTodo(id));
+    // };
 
     const toggleCreateModal = (isOpen: boolean) => () => {
         dispatch(setIsCreateFormOpen(isOpen));
-    }
+    };
+
+    const toggleConfirmModal = (isDeleteConfirmOpen: boolean, todo: any) => () => {
+        dispatch(setIsDeleteConfirmOpen({ isDeleteConfirmOpen, todo }));
+    };
 
     return (
         <Box className={classes.toDoWrapper}>
             {isCreateFormOpen ? <CreateToDoFormDialog /> : null}
+            {isDeleteConfirmOpen ? <ConfirmationDialog /> : null}
             <Box>
                 <Button variant='contained' color='primary' onClick={toggleCreateModal(true)} startIcon={<AddIcon />}>
                     Create To Do
@@ -65,7 +70,7 @@ const ToDoPage = () => {
                                         <IconButton onClick={handleEditClick(todo.id)}>
                                             <EditIcon />
                                         </IconButton>
-                                        <IconButton onClick={handleDeleteClick(todo.id)}>
+                                        <IconButton onClick={toggleConfirmModal(true, todo)}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </TableCell>

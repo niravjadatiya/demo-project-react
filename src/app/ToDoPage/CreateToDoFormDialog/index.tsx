@@ -1,8 +1,7 @@
 import { Box, Button, Checkbox, Dialog, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, Slider, TextField, Typography } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import { BaseSyntheticEvent, ChangeEvent, useState } from 'react';
+import { BaseSyntheticEvent, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { handleFormChange, saveTodo, setIsCreateFormOpen, updateTodo } from '../toDoSlice';
+import { saveTodo, setIsCreateFormOpen, updateTodo } from '../toDoSlice';
 import useStyles from './styles';
 
 // since we are using redux we don't require props to pass but
