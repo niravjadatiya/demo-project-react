@@ -1,8 +1,8 @@
 import { Box, Button, Checkbox, Dialog, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, Slider, TextField, Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import { BaseSyntheticEvent } from 'react';
+import { BaseSyntheticEvent, ChangeEvent, useState } from 'react';
 import { useAppDispatch } from '../../../redux/store';
-import { setIsCreateFormOpen } from '../toDoSlice';
+import { handleFormChange, setIsCreateFormOpen } from '../toDoSlice';
 import useStyles from './styles';
 
 // since we are using redux we don't require props to pass but
@@ -14,10 +14,78 @@ import useStyles from './styles';
 // const CreateToDoFormDialog = ({ toggleCreateModal }: IProps) => {
 //
 
+interface IForm {
+    userName: string;
+    gender: string;
+    hobby: any;
+    age: number;
+    date: any;
+    taskName: string;
+    status: string;
+}
+interface IRegexRuleState {
+    isMaxChar: boolean;
+    isAlphabetsOnly: boolean;
+};
+
+
 const CreateToDoFormDialog = () => {
     const classes = useStyles();
     const dispatch = useAppDispatch();
-    const handleInputChange = (event: any) => {
+    const [emailError, setEmailError] = useState('');
+
+    const [formValues, setFormValues] = useState<IForm>({
+        userName: '',
+        gender: '',
+        hobby: [],
+        age: 18,
+        date: '',
+        taskName: '',
+        status: '',
+    });
+
+    const handleInputChange = (e: BaseSyntheticEvent) => {
+        console.log(e.target.value)
+        const target = e.target.type;
+        const inputName = e.target.name;
+        let inputVal = '';
+        if (inputName === 'userName') {
+            inputVal = e.target.value;
+            const regexMaxChar = /^.{0,15}$/;
+            const regexOnlyAlphabets = /^[a-zA-Z][a-zA-Z ]*$/;
+            const isMaxChar = regexMaxChar.test(inputVal);
+            const isAlphabetsOnly = regexOnlyAlphabets.test(inputVal);
+            let str = '';
+            if (!isAlphabetsOnly) {
+                str += 'Only Alphabets allowed! ';
+            }
+            if (!isMaxChar) {
+                str += 'Name should not more than 15 characters long!'
+            }
+            console.log(isMaxChar, isAlphabetsOnly)
+            setEmailError(str);
+        } else if (inputName === 'hobby') {
+            inputVal = e.target.checked;
+            const hobby = formValues.hobby;
+            if (inputVal) {
+                hobby.push(e.target.value)
+            } else {
+                const index = hobby.indexOf(e.target.value)
+                hobby.splice(index, 1)
+            }
+            inputVal = hobby;
+        } else if (inputName === 'gender' || inputName === 'taskName') {
+            inputVal = e.target.value;
+        }
+        setFormValues({ ...formValues, [inputName]: inputVal });
+    };
+
+    const handleSelectChange = (e: BaseSyntheticEvent) => {
+        setFormValues({ ...formValues, status: e.target.value });
+    };
+
+    const handleSlideChange = (event: BaseSyntheticEvent, newValue: number | number[]) => {
+        setFormValues({ ...formValues, age: newValue as number });
     };
 
     const handleSubmit = async (event: BaseSyntheticEvent) => {
@@ -37,17 +105,21 @@ const CreateToDoFormDialog = () => {
                 <form className={classes.form} onSubmit={handleSubmit}>
                     <TextField
                         id='userName'
+                        name='userName'
                         label='User Name'
                         onChange={handleInputChange}
+                        value={formValues.userName}
                         required={true}
                         type={'text'}
                         size='small'
+                        error={!!(emailError)}
+                        helperText={!!(emailError) ? emailError : ''}
                     />
                     <FormControl component="fieldset" className={'checkbox-radio-control'}>
                         <FormLabel component="legend">Gender</FormLabel>
-                        <RadioGroup aria-label="gender" name="gender1" value={'Male'} onChange={handleInputChange}>
-                            <FormControlLabel value="female" control={<Radio />} label="Female" />
-                            <FormControlLabel value="male" control={<Radio />} label="Male" />
+                        <RadioGroup aria-label="gender" name="gender" value={formValues.gender} onChange={handleInputChange}>
+                            <FormControlLabel value="Female" control={<Radio color="primary" />} label="Female" />
+                            <FormControlLabel value="Male" control={<Radio color="primary" />} label="Male" />
                         </RadioGroup>
                     </FormControl>
                     <FormControl component="fieldset" className={'checkbox-radio-control'}>
@@ -55,9 +127,10 @@ const CreateToDoFormDialog = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={true}
+                                    checked={formValues.hobby.includes('Sports')}
+                                    value={'Sports'}
                                     onChange={handleInputChange}
-                                    name="Sports"
+                                    name="hobby"
                                     color="primary"
                                 />
                             }
@@ -66,9 +139,10 @@ const CreateToDoFormDialog = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={true}
+                                    checked={formValues.hobby.includes('Reading')}
+                                    value={'Reading'}
                                     onChange={handleInputChange}
-                                    name="Reading"
+                                    name="hobby"
                                     color="primary"
                                 />
                             }
@@ -77,9 +151,10 @@ const CreateToDoFormDialog = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={true}
+                                    checked={formValues.hobby.includes('Music')}
+                                    value={'Music'}
                                     onChange={handleInputChange}
-                                    name="Music"
+                                    name="hobby"
                                     color="primary"
                                 />
                             }
@@ -89,20 +164,22 @@ const CreateToDoFormDialog = () => {
                     <FormControl component="fieldset">
                         <FormLabel component="legend">Age</FormLabel>
                         <Slider
-                            value={8}
+                            value={formValues.age}
+                            name='age'
                             min={18}
                             step={1}
                             max={55}
-                            onChange={handleInputChange}
-                            valueLabelDisplay='auto'
+                            onChange={handleSlideChange}
+                            valueLabelDisplay="auto"
                         />
                     </FormControl>
                     <FormControl component="fieldset">
                         <TextField
                             id="date"
+                            name='date'
                             label="Birthday"
                             type="date"
-                            defaultValue="2017-05-24"
+                            value={formValues.date}
                             InputLabelProps={{ shrink: true }}
                             size='small'
                         />
@@ -110,7 +187,9 @@ const CreateToDoFormDialog = () => {
                     <FormControl component="fieldset">
                         <TextField
                             id='taskName'
+                            name='taskName'
                             label='Task Name'
+                            value={formValues.taskName}
                             onChange={handleInputChange}
                             required={true}
                             type={'text'}
@@ -122,11 +201,12 @@ const CreateToDoFormDialog = () => {
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={'Active'}
-                            onChange={handleInputChange}
+                            name='status'
+                            value={formValues.status}
+                            onChange={handleSelectChange}
                         >
-                            <MenuItem value={10}>Active</MenuItem>
-                            <MenuItem value={20}>InActive</MenuItem>
+                            <MenuItem value={'Active'}>Active</MenuItem>
+                            <MenuItem value={'InActive'}>InActive</MenuItem>
                         </Select>
                     </FormControl>
                     <Box className={classes.btnsWrapper}>

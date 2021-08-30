@@ -25,6 +25,9 @@ export const toDoSlice = createSlice({
             state.isCreateFormOpen = payload;
             return state;
         },
+        handleFormChange: (state, { payload }: any) => {
+            console.log(payload);
+        },
         saveTodo: (state) => {
             console.log('saveToDo');
             return state;
@@ -49,7 +52,7 @@ export const toDoSlice = createSlice({
     // }
 });
 
-export const { saveTodo, setIsCreateFormOpen } = toDoSlice.actions;
+export const { saveTodo, setIsCreateFormOpen, handleFormChange } = toDoSlice.actions;
 
 // export { saveTodoAPI };
 
