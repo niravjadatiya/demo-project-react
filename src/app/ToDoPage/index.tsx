@@ -1,24 +1,25 @@
 import { BaseSyntheticEvent, useState } from 'react';
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
+import { Box, Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import useStyles from './styles';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import CreateToDoFormDialog from './CreateToDoFormDialog';
-import { setIsCreateFormOpen } from './toDoSlice';
+import { deleteTodo, editTodo, setIsCreateFormOpen } from './toDoSlice';
 
 const ToDoPage = () => {
     const dispatch = useAppDispatch();
     const classes = useStyles();
-    const [todoList, setTodoList] = useState([]);
-    const { isCreateFormOpen } = useAppSelector((state: any) => state.toDo);
+    const { isCreateFormOpen, toDoList } = useAppSelector((state: any) => state.toDo);
 
 
-    // const handleInputChange = (event: any) => {
+    const handleEditClick = (id: any) => () => {
+        dispatch(editTodo(id));
+    };
 
-    // };
-
-    const handleSubmit = async (event: BaseSyntheticEvent) => {
-        event.preventDefault();
+    const handleDeleteClick = (id: any) => () => {
+        dispatch(deleteTodo(id));
     };
 
     const toggleCreateModal = (isOpen: boolean) => () => {
@@ -39,25 +40,35 @@ const ToDoPage = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>User Name</TableCell>
-                                <TableCell align="right">Gender</TableCell>
-                                <TableCell align="right">Hobby</TableCell>
-                                <TableCell align="right">Age</TableCell>
-                                <TableCell align="right">Date</TableCell>
-                                <TableCell align="right">Task Name</TableCell>
-                                <TableCell align="right">Status</TableCell>
-                                <TableCell align="right"></TableCell>
+                                <TableCell>Gender</TableCell>
+                                <TableCell>Hobby</TableCell>
+                                <TableCell>Age</TableCell>
+                                <TableCell>Date</TableCell>
+                                <TableCell>Task Name</TableCell>
+                                <TableCell>Status</TableCell>
+                                <TableCell></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {todoList.map((todo: any) => (
-                                <TableRow key={todo.name}>
+                            {toDoList.length > 0 && toDoList.map((todo: any, index: number) => (
+                                <TableRow key={index}>
                                     <TableCell component="th" scope="row">
-                                        {todo.name}
+                                        {todo.userName}
                                     </TableCell>
-                                    <TableCell align="right">{todo.calories}</TableCell>
-                                    <TableCell align="right">{todo.fat}</TableCell>
-                                    <TableCell align="right">{todo.carbs}</TableCell>
-                                    <TableCell align="right">{todo.protein}</TableCell>
+                                    <TableCell>{todo.gender}</TableCell>
+                                    <TableCell>{todo?.hobby?.toString()}</TableCell>
+                                    <TableCell>{todo.age}</TableCell>
+                                    <TableCell>{todo.date}</TableCell>
+                                    <TableCell>{todo.taskName}</TableCell>
+                                    <TableCell>{todo.status}</TableCell>
+                                    <TableCell>
+                                        <IconButton onClick={handleEditClick(todo.id)}>
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton onClick={handleDeleteClick(todo.id)}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

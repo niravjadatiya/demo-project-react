@@ -18,6 +18,8 @@ export const toDoSlice = createSlice({
     initialState: {
         isLoading: false,
         isCreateFormOpen: false,
+        toDoList: [],
+        selectedTodo: null
     },
     reducers: {
         setIsCreateFormOpen: (state, { payload }: any) => {
@@ -28,8 +30,37 @@ export const toDoSlice = createSlice({
         handleFormChange: (state, { payload }: any) => {
             console.log(payload);
         },
-        saveTodo: (state) => {
-            console.log('saveToDo');
+
+        saveTodo: (state, { payload }: any) => {
+            payload.id = new Date().getTime();
+            state.toDoList = Object.assign([...state.toDoList, payload]);
+            state.isCreateFormOpen = false;
+            return state;
+        },
+
+        editTodo: (state, { payload }: any) => {
+            const toDoObj: any = state.toDoList.find((row: any) => row.id === payload);
+            console.log(toDoObj, payload);
+            state.selectedTodo = toDoObj;
+            state.isCreateFormOpen = true;
+            return state;
+        },
+
+        updateTodo: (state, { payload }: any) => {
+            const toDoList: any = Object.assign([], state.toDoList);
+            const i: any = toDoList.findIndex((row: any) => row.id === payload.id);
+            toDoList[i] = payload;
+            state.toDoList = Object.assign([...toDoList]);
+            state.selectedTodo = null;
+            state.isCreateFormOpen = false;
+            return state;
+        },
+
+        deleteTodo: (state, { id }: any) => {
+            const toDoList = Object.assign([], state.toDoList);
+            const index = toDoList.findIndex((row: any) => row.id === id);
+            toDoList.splice(index, 1);
+            state.toDoList = [...toDoList];
             return state;
         },
     },
@@ -52,7 +83,7 @@ export const toDoSlice = createSlice({
     // }
 });
 
-export const { saveTodo, setIsCreateFormOpen, handleFormChange } = toDoSlice.actions;
+export const { saveTodo, setIsCreateFormOpen, handleFormChange, deleteTodo, editTodo, updateTodo } = toDoSlice.actions;
 
 // export { saveTodoAPI };
 

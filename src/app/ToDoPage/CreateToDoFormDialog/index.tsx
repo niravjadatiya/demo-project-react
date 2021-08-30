@@ -1,8 +1,8 @@
 import { Box, Button, Checkbox, Dialog, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, Slider, TextField, Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { BaseSyntheticEvent, ChangeEvent, useState } from 'react';
-import { useAppDispatch } from '../../../redux/store';
-import { handleFormChange, setIsCreateFormOpen } from '../toDoSlice';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { handleFormChange, saveTodo, setIsCreateFormOpen, updateTodo } from '../toDoSlice';
 import useStyles from './styles';
 
 // since we are using redux we don't require props to pass but
@@ -15,6 +15,7 @@ import useStyles from './styles';
 //
 
 interface IForm {
+    id: number | null;
     userName: string;
     gender: string;
     hobby: any;
@@ -23,32 +24,27 @@ interface IForm {
     taskName: string;
     status: string;
 }
-interface IRegexRuleState {
-    isMaxChar: boolean;
-    isAlphabetsOnly: boolean;
-};
-
 
 const CreateToDoFormDialog = () => {
     const classes = useStyles();
     const dispatch = useAppDispatch();
+    const { selectedTodo } = useAppSelector((state: any) => state.toDo);
     const [emailError, setEmailError] = useState('');
 
     const [formValues, setFormValues] = useState<IForm>({
-        userName: '',
-        gender: '',
-        hobby: [],
-        age: 18,
-        date: '',
-        taskName: '',
-        status: '',
+        id: selectedTodo ? selectedTodo.id : null,
+        userName: selectedTodo ? selectedTodo.userName : '',
+        gender: selectedTodo ? selectedTodo.gender : 'Male',
+        hobby: selectedTodo ? selectedTodo.hobby : [],
+        age: selectedTodo ? selectedTodo.age : 18,
+        date: selectedTodo ? selectedTodo.date : (new Date()).toISOString().substring(0, 10),
+        taskName: selectedTodo ? selectedTodo.taskName : '',
+        status: selectedTodo ? selectedTodo.status : 'Active',
     });
 
     const handleInputChange = (e: BaseSyntheticEvent) => {
-        console.log(e.target.value)
-        const target = e.target.type;
         const inputName = e.target.name;
-        let inputVal = '';
+        let inputVal: any = '';
         if (inputName === 'userName') {
             inputVal = e.target.value;
             const regexMaxChar = /^.{0,15}$/;
@@ -66,7 +62,8 @@ const CreateToDoFormDialog = () => {
             setEmailError(str);
         } else if (inputName === 'hobby') {
             inputVal = e.target.checked;
-            const hobby = formValues.hobby;
+            const hobby = [...formValues.hobby];
+            console.log(inputVal, formValues.hobby, e.target.value);
             if (inputVal) {
                 hobby.push(e.target.value)
             } else {
@@ -74,7 +71,7 @@ const CreateToDoFormDialog = () => {
                 hobby.splice(index, 1)
             }
             inputVal = hobby;
-        } else if (inputName === 'gender' || inputName === 'taskName') {
+        } else if (inputName === 'gender' || inputName === 'taskName' || inputName === 'date') {
             inputVal = e.target.value;
         }
         setFormValues({ ...formValues, [inputName]: inputVal });
@@ -90,6 +87,8 @@ const CreateToDoFormDialog = () => {
 
     const handleSubmit = async (event: BaseSyntheticEvent) => {
         event.preventDefault();
+        console.log(formValues);
+        formValues.id ? dispatch(updateTodo(formValues)) : dispatch(saveTodo(formValues));
     };
 
     const handleClose = () => {
@@ -100,7 +99,7 @@ const CreateToDoFormDialog = () => {
         <Dialog open={true} onClose={handleClose}>
             <Box className={classes.container}>
                 <Typography variant='h6' className={classes.formTitle}>
-                    Create New To-Do Item
+                    {formValues.id ? 'Update To-Do Item' : 'Create New To-Do Item'}
                 </Typography>
                 <form className={classes.form} onSubmit={handleSubmit}>
                     <TextField
@@ -177,9 +176,10 @@ const CreateToDoFormDialog = () => {
                         <TextField
                             id="date"
                             name='date'
-                            label="Birthday"
+                            label="Date"
                             type="date"
                             value={formValues.date}
+                            onChange={handleInputChange}
                             InputLabelProps={{ shrink: true }}
                             size='small'
                         />
@@ -211,7 +211,9 @@ const CreateToDoFormDialog = () => {
                     </FormControl>
                     <Box className={classes.btnsWrapper}>
                         <Button variant='contained' color='secondary' type='reset' onClick={handleClose}>Cancel</Button>
-                        <Button variant='contained' color='primary' type='submit' disabled={false} startIcon={<AddIcon />}>Create To Do</Button>
+                        <Button variant='contained' color='primary' type='submit' disabled={false}>
+                            {formValues.id ? 'Update To Do' : 'Create To Do'}
+                        </Button>
                     </Box>
                 </form>
             </Box>
