@@ -11,3 +11,7 @@
 - add material ui best supported fonts and icons
 `<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />`
 `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />`
+
+## Add Redux Toolkit
+`npm install @reduxjs/toolkit react-redux`
+`npm install --save-dev  @types/react-redux`
