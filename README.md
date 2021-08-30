@@ -15,3 +15,12 @@
 ## Add Redux Toolkit
 `npm install @reduxjs/toolkit react-redux`
 `npm install --save-dev  @types/react-redux`
+
+-Added redux/store.ts for creating store
+-Added theme.ts for material ui
+-Cleanup Component
+
+
+
+# TODO:
+-Remove `any` where its possible with creating proper interface

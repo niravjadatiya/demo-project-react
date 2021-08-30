@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import toDoReducer from '../app/ToDoPage/toDoSlice';
 
 const store = configureStore({
     reducer: {
+        toDo: toDoReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
