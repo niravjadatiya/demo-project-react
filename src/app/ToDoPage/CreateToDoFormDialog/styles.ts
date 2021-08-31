@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core';
 
 export default makeStyles(() => ({
     container: {
@@ -13,7 +13,7 @@ export default makeStyles(() => ({
     form: {
         display: 'flex',
         flexDirection: 'column',
-        '& > .MuiFormControl-root' :{
+        '& > .MuiFormControl-root': {
             marginBottom: 20
         },
         '& .checkbox-radio-control': {

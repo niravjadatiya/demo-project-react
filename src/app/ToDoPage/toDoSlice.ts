@@ -25,13 +25,13 @@ export const toDoSlice = createSlice({
 
     reducers: {
         setIsCreateFormOpen: (state, { payload }: any) => {
-            console.log(state, payload);
+            // console.log(state, payload);
             state.isCreateFormOpen = payload;
             return state;
         },
 
         setIsDeleteConfirmOpen: (state, { payload }: any) => {
-            console.log(state, payload);
+            // console.log(state, payload);
             state.isDeleteConfirmOpen = payload.isDeleteConfirmOpen;
             if (payload.todo) {
                 state.selectedTodo = payload.todo;
@@ -48,7 +48,7 @@ export const toDoSlice = createSlice({
 
         editTodo: (state, { payload }: any) => {
             const toDoObj: any = state.toDoList.find((row: any) => row.id === payload);
-            console.log(toDoObj, payload);
+            // console.log(toDoObj, payload);
             state.selectedTodo = toDoObj;
             state.isCreateFormOpen = true;
             return state;

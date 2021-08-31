@@ -12,16 +12,15 @@ import useStyles from './styles';
 // }
 // const CreateToDoFormDialog = ({ toggleCreateModal }: IProps) => {
 //
-
 interface IForm {
     id: number | null;
     userName: string;
-    gender: string;
-    hobby: any;
+    gender: 'Male' | 'Female';
+    hobby: Array<string>;
     age: number;
-    date: any;
+    date: string;
     taskName: string;
-    status: string;
+    status: 'Active' | 'InActive';
 }
 
 const CreateToDoFormDialog = () => {
@@ -44,34 +43,44 @@ const CreateToDoFormDialog = () => {
     const handleInputChange = (e: BaseSyntheticEvent) => {
         const inputName = e.target.name;
         let inputVal: any = '';
-        if (inputName === 'userName') {
-            inputVal = e.target.value;
-            const regexMaxChar = /^.{0,15}$/;
-            const regexOnlyAlphabets = /^[a-zA-Z][a-zA-Z ]*$/;
-            const isMaxChar = regexMaxChar.test(inputVal);
-            const isAlphabetsOnly = regexOnlyAlphabets.test(inputVal);
-            let str = '';
-            if (!isAlphabetsOnly) {
-                str += 'Only Alphabets allowed! ';
-            }
-            if (!isMaxChar) {
-                str += 'Name should not more than 15 characters long!'
-            }
-            console.log(isMaxChar, isAlphabetsOnly)
-            setEmailError(str);
-        } else if (inputName === 'hobby') {
-            inputVal = e.target.checked;
-            const hobby = [...formValues.hobby];
-            console.log(inputVal, formValues.hobby, e.target.value);
-            if (inputVal) {
-                hobby.push(e.target.value)
-            } else {
-                const index = hobby.indexOf(e.target.value)
-                hobby.splice(index, 1)
-            }
-            inputVal = hobby;
-        } else if (inputName === 'gender' || inputName === 'taskName' || inputName === 'date') {
-            inputVal = e.target.value;
+
+        switch (inputName) {
+            case 'userName':
+                inputVal = e.target.value;
+                const regexMaxChar = /^.{0,15}$/;
+                const regexOnlyAlphabets = /^[a-zA-Z][a-zA-Z ]*$/;
+                const isMaxChar = regexMaxChar.test(inputVal);
+                const isAlphabetsOnly = regexOnlyAlphabets.test(inputVal);
+                let str = '';
+                if (!isAlphabetsOnly) {
+                    str += 'Only Alphabets allowed! ';
+                }
+                if (!isMaxChar) {
+                    str += 'Name should not more than 15 characters long!';
+                }
+                setEmailError(str);
+                break;
+
+            case 'hobby':
+                inputVal = e.target.checked;
+                const hobby = [...formValues.hobby];
+                if (inputVal) {
+                    hobby.push(e.target.value);
+                } else {
+                    const index = hobby.indexOf(e.target.value);
+                    hobby.splice(index, 1);
+                }
+                inputVal = hobby;
+                break;
+
+            case 'gender':
+            case 'taskName':
+            case 'date':
+                inputVal = e.target.value;
+                break;
+
+            default:
+                break;
         }
         setFormValues({ ...formValues, [inputName]: inputVal });
     };
@@ -86,18 +95,17 @@ const CreateToDoFormDialog = () => {
 
     const handleSubmit = async (event: BaseSyntheticEvent) => {
         event.preventDefault();
-        console.log(formValues);
         formValues.id ? dispatch(updateTodo(formValues)) : dispatch(saveTodo(formValues));
     };
 
     const handleClose = () => {
-        dispatch(setIsCreateFormOpen(false))
-    }
+        dispatch(setIsCreateFormOpen(false));
+    };
 
     return (
-        <Dialog open={true} onClose={handleClose}>
+        <Dialog open={true} onClose={handleClose} data-testid='createToDoFormDialog'>
             <Box className={classes.container}>
-                <Typography variant='h6' className={classes.formTitle}>
+                <Typography variant='h6' className={classes.formTitle} data-testid='formTitle'>
                     {formValues.id ? 'Update To-Do Item' : 'Create New To-Do Item'}
                 </Typography>
                 <form className={classes.form} onSubmit={handleSubmit}>
@@ -112,6 +120,7 @@ const CreateToDoFormDialog = () => {
                         size='small'
                         error={!!(emailError)}
                         helperText={!!(emailError) ? emailError : ''}
+                        data-testid='userNameInput'
                     />
                     <FormControl component="fieldset" className={'checkbox-radio-control'}>
                         <FormLabel component="legend">Gender</FormLabel>
@@ -130,6 +139,7 @@ const CreateToDoFormDialog = () => {
                                     onChange={handleInputChange}
                                     name="hobby"
                                     color="primary"
+                                    data-testid='sportsCheckbox'
                                 />
                             }
                             label="Sports"
@@ -193,13 +203,14 @@ const CreateToDoFormDialog = () => {
                             required={true}
                             type={'text'}
                             size='small'
+                            data-testid='taskName'
                         />
                     </FormControl>
                     <FormControl>
-                        <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                        <InputLabel id="status-label">Status</InputLabel>
                         <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
+                            labelId="status-label"
+                            id="status"
                             name='status'
                             value={formValues.status}
                             onChange={handleSelectChange}
@@ -209,8 +220,8 @@ const CreateToDoFormDialog = () => {
                         </Select>
                     </FormControl>
                     <Box className={classes.btnsWrapper}>
-                        <Button variant='contained' color='secondary' type='reset' onClick={handleClose}>Cancel</Button>
-                        <Button variant='contained' color='primary' type='submit' disabled={false}>
+                        <Button variant='contained' color='secondary' type='reset' onClick={handleClose} data-testid='cancelBtn'>Cancel</Button>
+                        <Button variant='contained' color='primary' type='submit' disabled={false} data-testid='submitBtn'>
                             {formValues.id ? 'Update To Do' : 'Create To Do'}
                         </Button>
                     </Box>

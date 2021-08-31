@@ -1,5 +1,5 @@
-import Box from "@material-ui/core/Box";
-import ToDoPage from "./app/ToDoPage";
+import Box from '@material-ui/core/Box';
+import ToDoPage from './app/ToDoPage';
 
 const App = () => {
     return (
@@ -7,6 +7,6 @@ const App = () => {
             <ToDoPage />
         </Box>
     );
-}
+};
 
 export default App;

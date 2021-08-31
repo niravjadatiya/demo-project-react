@@ -1,4 +1,3 @@
-import { BaseSyntheticEvent, useState } from 'react';
 import { Box, Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -18,10 +17,6 @@ const ToDoPage = () => {
         dispatch(editTodo(id));
     };
 
-    // const handleDeleteClick = (id: any) => () => {
-    //     dispatch(deleteTodo(id));
-    // };
-
     const toggleCreateModal = (isOpen: boolean) => () => {
         dispatch(setIsCreateFormOpen(isOpen));
     };
@@ -31,15 +26,15 @@ const ToDoPage = () => {
     };
 
     return (
-        <Box className={classes.toDoWrapper}>
+        <Box className={classes.toDoWrapper} data-testid='toDoWrapper'>
             {isCreateFormOpen ? <CreateToDoFormDialog /> : null}
             {isDeleteConfirmOpen ? <ConfirmationDialog /> : null}
-            <Box>
-                <Button variant='contained' color='primary' onClick={toggleCreateModal(true)} startIcon={<AddIcon />}>
+            <Box mb={2}>
+                <Button variant='contained' color='primary' onClick={toggleCreateModal(true)} startIcon={<AddIcon />} data-testid='createToDoBtn'>
                     Create To Do
                 </Button>
             </Box>
-            <Box className={classes.tableWrapper}>
+            <Box className={classes.tableWrapper} data-testid='toDoTableWrapper'>
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="simple table">
                         <TableHead>
@@ -67,10 +62,10 @@ const ToDoPage = () => {
                                     <TableCell>{todo.taskName}</TableCell>
                                     <TableCell>{todo.status}</TableCell>
                                     <TableCell>
-                                        <IconButton onClick={handleEditClick(todo.id)}>
+                                        <IconButton onClick={handleEditClick(todo.id)} data-testid='rowEditBtn'>
                                             <EditIcon />
                                         </IconButton>
-                                        <IconButton onClick={toggleConfirmModal(true, todo)}>
+                                        <IconButton onClick={toggleConfirmModal(true, todo)} data-testid='rowDeleteBtn'>
                                             <DeleteIcon />
                                         </IconButton>
                                     </TableCell>

@@ -3,7 +3,6 @@ import { useAppDispatch } from '../../../redux/store';
 import { deleteTodo, setIsDeleteConfirmOpen } from '../toDoSlice';
 import useStyles from './styles';
 
-
 const ConfirmationDialog = () => {
     const classes = useStyles();
     const dispatch = useAppDispatch();
@@ -17,7 +16,7 @@ const ConfirmationDialog = () => {
     };
 
     return (
-        <Dialog open={true}>
+        <Dialog open={true} data-testid='confirmationDialog'>
             <Container className={classes.container} >
                 <Typography variant='h5'>Confirm Delete</Typography>
                 <Typography variant='subtitle1'>
@@ -25,7 +24,7 @@ const ConfirmationDialog = () => {
                 </Typography>
                 <Box className={classes.btnsWrapper}>
                     <Button variant='contained' color='secondary' onClick={handleClose}>Cancel</Button>
-                    <Button variant='contained' color='primary' onClick={handleDelete}>Delete</Button>
+                    <Button variant='contained' color='primary' onClick={handleDelete} data-testid='confirmationDialogDeleteBtn'>Delete</Button>
                 </Box>
             </Container>
         </Dialog>

@@ -1,5 +1,10 @@
-# demo-project-react
- A demo project with reactjs, typescript, material-ui, css in js
+# Demo-project-react
+ A demo project with react.js, redux, typescript, material-ui, css in js
+# To Run The app
+`npm start`
+
+# To Test The app
+`npm test`
 
 # Steps I followed to create the app
 ## Create react app
@@ -20,7 +25,5 @@
 -Added theme.ts for material ui
 -Cleanup Component
 
-
-
-# TODO:
--Remove `any` where its possible with creating proper interface
+## React testing library
+`npm install --save-dev @testing-library/react`
